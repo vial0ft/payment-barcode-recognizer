@@ -1,0 +1,8 @@
+{:full-name "erkc/payment-barcode-recognizer"
+ :ns-name   "erkc.payment-barcode-recognizer"
+ :sanitized "erkc/payment_barcode_recognizer"
+ :name      "payment-barcode-recognizer"
+ :modules   {:root         "modules"
+             :repositories [{:url  "https://github.com/kit-clj/modules.git"
+                             :tag  "master"
+                             :name "kit-modules"}]}}
