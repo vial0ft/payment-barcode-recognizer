@@ -17,7 +17,7 @@
 
 (defmethod schema-compatibility [:linear :prefix] [_ _ prefixes]
   (fn [raw-linear-barcode]
-    (some #(str/starts-with? % raw-linear-barcode) prefixes)))
+    (some (fn [prefix] (str/starts-with? raw-linear-barcode prefix)) prefixes)))
 
 (defmethod schema-compatibility :default [_ _ _] (fn [_] false))
 

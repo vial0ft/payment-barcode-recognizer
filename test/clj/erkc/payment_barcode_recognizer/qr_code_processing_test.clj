@@ -31,7 +31,6 @@
       (is (= (qr-proc/attr-map raw-str-qr-code) expectation))))
 
   (testing "Scheme compatibility by name of company"
-    
     (let [{company-name :company-name} (gens/gen-qr-code-recognizing-rule-ny-company-name)
           fun (compatibility/schema-compatibility :qr-code :company-name company-name)
           compatible? (fun {"Name" company-name})]
@@ -39,9 +38,10 @@
     )
 
   (testing "Recognizing qr-code raw string"
-    (let [qr-code-attributes (qr-proc/attr-map "BRAH|Name=BLA BLA NAME|Sum=10000")
-          qr-code-recognizing-scheme (gens/gen-qr-code-scheme {:company-name "BLA BLA NAME"})
-          result (qr-proc/recognize-qr-code qr-code-attributes [qr-code-recognizing-scheme])]
+    (let [raw-str-qr-code "BRAH|Name=BLA BLA NAME|Sum=10000"
+          qr-code-attributes (qr-proc/attr-map "BRAH|Name=BLA BLA NAME|Sum=10000")
+          qr-code-recognizing-scheme (gens/gen-recognizing-code-scheme :qr-code  {:company-name "BLA BLA NAME"})
+          result (qr-proc/recognize-code raw-str-qr-code [qr-code-recognizing-scheme])]
       (is (contains? result :result)))
     )
 )

@@ -15,6 +15,15 @@
         ))
    )))
 
+(defn- recognize-qr-code
+  [attrs schemas]
+  (when-not (empty? schemas)
+      (let [schema (first schemas)
+            recognizing-rules (get-in schema [:qr-code :recognizing-scheme])]
+        (if (compatible-by-scheme? recognizing-rules attrs)
+          {:result (select-keys schema [:group :location :additional-info])}
+            (recur attrs (next schemas))))))
+
 (defn attr-map
   "Transform string-like qr-code info to map of attributes
   Format of string:
@@ -28,16 +37,11 @@
    (flatten)
    (apply hash-map)))
 
-
-(defn recognize-qr-code
-  "Try to recognize input `raw-rq-code-str` by `schemas` list
+(defn recognize-code
+  "Try to recognize input `raw-qr-code-str` by `schemas` list
   Return first matched group as map:
-  ```{:result (keys [:group :location :additional-info])}}```
-  or ```{:error \"Cannot recognize code\"}```"
-  [attrs schemas]
-  (if (or (empty? schemas) (empty? attrs)) {:error "Cannot recognize code"}
-      (let [schema (first schemas)
-            recognizing-rules (get-in schema [:qr-code :recognizing-scheme])]
-        (if (compatible-by-scheme? recognizing-rules attrs)
-          {:result (select-keys schema [:group :location :additional-info])}
-            (recur attrs (next schemas))))))
+  `{:result (keys [:group :location :additional-info])}}`
+  or `nil`"
+  [raw-qr-code-str schemas]
+  (when-let [code-attrs (attr-map raw-qr-code-str)]
+    (recognize-qr-code code-attrs schemas)))
