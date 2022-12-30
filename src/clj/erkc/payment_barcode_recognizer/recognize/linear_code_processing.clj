@@ -2,9 +2,7 @@
   (:require [erkc.payment-barcode-recognizer.recognize.barcode-schema-compatibility :as compatibility]
             [clojure.string :as str]))
 
-
-
-(defn compatible-by-scheme? [raw-str-linear-code recognizing-schema]
+(defn- compatible-by-scheme? [raw-str-linear-code recognizing-schema]
   (if (empty? recognizing-schema) false
       (loop [schema-checkers  recognizing-schema
              raw-str-code raw-str-linear-code]
@@ -17,13 +15,12 @@
               )))
       ))
 
-(defn recognize-linear-code
+(defn- recognize-linear-code
   "Try to recognize input `raw-str-linear-code` by `schemas` list
   Return first matched group as map:
   ```
   {
-   :result
-   (keys [:group :location :additional-info])
+   :result (keys [:group :location :additional-info :code-info])
    :parsing-schema
   }
   ```
@@ -37,10 +34,10 @@
           recognizing-rules (get-in schema [:linear :recognizing-scheme])]
       (if (compatible-by-scheme? raw-str-linear-code recognizing-rules)
         {:result (select-keys schema [:group :location :additional-info])
-         :parsing-schema (get-in schema [:linear :parsing-schema])}
+         :parsing-schema (get-in schema [:linear :parsing-scheme])}
         (recur raw-str-linear-code (next schemas))))))
 
-(defn attr-map
+(defn- attr-map
   "Grabbing information from string-like linear code by `parsing-schema`
    Example of parsing-schema:
    ```
@@ -50,13 +47,31 @@
     :sum-bill { :offset 29 :count 7 }
    }
    ```
-   as result return a map with keys `[:account :id-bill :sum-bill]`"
+   as result return a map with keys `[:account :id-bill :sum-bill]`
+   or `nil`"
 
   [raw-str-linear-code parsing-schema]
-  (if (empty? parsing-schema) {:error "Can't parse" :reason "Parsing schema is empty"}
+  (when parsing-schema
       (reduce-kv
        (fn [m k v]
          (let [{offset :offset
                 count :count} v]
            (assoc m k (subs raw-str-linear-code offset (+ offset count)))))
        {} parsing-schema)))
+
+(defn recognize-code
+  "Try to recognize input `raw-str-linear-code` by `schemas` list
+  Return first matched group as map:
+  ```
+  {:result (keys [:group :location :additional-info :code-info])
+   :parsing-info ;; all information has been gotten from linear-code by schema
+  }```
+  or `nil`"
+  [raw-str-linear-code schemas]
+  (when-let [recognized-code-group (recognize-linear-code raw-str-linear-code schemas)]
+    (let [{ company-group :result
+            parsing-schema :parsing-schema } recognized-code-group
+          code-attrs (attr-map raw-str-linear-code parsing-schema)]
+      {:result (assoc company-group :code-info code-attrs)
+       :parsing-info code-attrs})
+    ))

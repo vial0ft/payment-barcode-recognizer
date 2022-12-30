@@ -24,7 +24,7 @@
           {:result (select-keys schema [:group :location :additional-info])}
             (recur attrs (next schemas))))))
 
-(defn attr-map
+(defn- attr-map
   "Transform string-like qr-code info to map of attributes
   Format of string:
   ```<some-code>|<attr-key>=<attr-value>|...```
@@ -37,11 +37,35 @@
    (flatten)
    (apply hash-map)))
 
+(defn- convert-sum [sum-str]
+  (let [fractional-part-start-position (- (count sum-str) 2)
+        integer-part (subs sum-str 0 fractional-part-start-position)
+        fractional-part (subs sum-str fractional-part-start-position (count sum-str))]
+    (bigdec
+     (format "%s.%s" integer-part fractional-part))))
+
+(defn- fetch-code-info [code-attrs-map]
+  (let [{account "PersAcc"
+         bill-id "QuittID"
+         sum "Sum"
+         } code-attrs-map]
+    {:account account :bill-id bill-id :sum (convert-sum sum)}
+    ))
+
 (defn recognize-code
   "Try to recognize input `raw-qr-code-str` by `schemas` list
   Return first matched group as map:
-  `{:result (keys [:group :location :additional-info])}}`
-  or `nil`"
+  ```
+  {
+   :result (keys [:group :location :additional-info :code-info])
+   :parsing-schema
+  }
+  ```
+  or `nil`
+  `:parsing-schema` has been used for grabbing attributes from string-like qr code"
   [raw-qr-code-str schemas]
   (when-let [code-attrs (attr-map raw-qr-code-str)]
-    (recognize-qr-code code-attrs schemas)))
+    (let [{company-group :result} (recognize-qr-code code-attrs schemas)]
+      {:result (assoc company-group :code-info (fetch-code-info code-attrs))
+       :parsing-info code-attrs}
+      )))
