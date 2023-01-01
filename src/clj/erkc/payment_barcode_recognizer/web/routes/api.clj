@@ -1,6 +1,7 @@
 (ns erkc.payment-barcode-recognizer.web.routes.api
   (:require
     [erkc.payment-barcode-recognizer.web.controllers.health :as health]
+    [erkc.payment-barcode-recognizer.web.controllers.recognizer :as recognizer]
     [erkc.payment-barcode-recognizer.web.middleware.exception :as exception]
     [erkc.payment-barcode-recognizer.web.middleware.formats :as formats]
     [integrant.core :as ig]
@@ -17,7 +18,9 @@
            :swagger {:info {:title "erkc.payment-barcode-recognizer API"}}
            :handler (swagger/create-swagger-handler)}}]
    ["/health"
-    {:get health/healthcheck!}]])
+    {:get health/healthcheck!}]
+   ["/recognize"
+    {:post recognizer/recognize-code}]])
 
 (defn route-data
   [opts]
