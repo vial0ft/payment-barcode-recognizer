@@ -1,0 +1,3 @@
+ALTER TABLE barcodes
+  DROP COLUMN IF EXISTS "group",
+  DROP COLUMN IF EXISTS location;

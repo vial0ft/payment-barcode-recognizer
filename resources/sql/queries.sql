@@ -12,5 +12,5 @@ SELECT * FROM barcodes WHERE account  = :account
 
 -- :name add-barcode :! :n
 -- :doc add scanned barcode
-INSERT INTO barcodes (bill_id, account, amount, barcode_info, created_at)
-            VALUES (:bill_id, :account, :amount, :barcode_info::jsonb, :created_at)
+INSERT INTO barcodes (bill_id, account, amount, barcode_info, created_at, "group", location)
+            VALUES (:bill-id, :account, :amount, :barcode-info::jsonb, :created-at, :group, :location)
