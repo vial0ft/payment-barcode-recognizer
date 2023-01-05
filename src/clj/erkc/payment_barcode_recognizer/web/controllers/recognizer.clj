@@ -8,12 +8,7 @@
             [clojure.edn :as edn]
 
             [cheshire.core :as json]
-            [postgre-types.json :refer [add-json-type add-jsonb-type]]
            ))
-
-
-;;(add-json-type json/generate-string json/parse-string)
-;;(add-jsonb-type json/generate-string json/parse-string)
 
 (def schema-file (io/file "./companies-schemas.edn"))
 (defonce recognizing-schemas (edn/read (java.io.PushbackReader. (io/reader schema-file))))
