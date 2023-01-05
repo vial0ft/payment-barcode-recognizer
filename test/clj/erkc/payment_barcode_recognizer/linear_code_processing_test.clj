@@ -31,4 +31,13 @@
           result (linear-proc/recognize-code "000000"  [company-group-schema])]
       (is (contains? result :result))
     ))
+
+  (testing "nil if there is no compatible scheme"
+    (let [raw-str-code "00000"
+          linear-recognizing-scheme (gens/gen-recognizing-code-scheme :linear {:barcode-length 6
+                                                                               :prefix ["000001"]})
+          company-group-schema (gens/gen-company-group-schema :some-company linear-recognizing-scheme)
+          result (linear-proc/recognize-code "000000"  [company-group-schema])]
+      (is (nil? result))
+      ))
  )

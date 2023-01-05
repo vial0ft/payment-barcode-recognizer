@@ -37,20 +37,12 @@
    (flatten)
    (apply hash-map)))
 
-(defn- convert-sum [sum-str]
-  (let [fractional-part-start-position (- (count sum-str) 2)
-        integer-part (subs sum-str 0 fractional-part-start-position)
-        fractional-part (subs sum-str fractional-part-start-position (count sum-str))]
-    (bigdec
-     (format "%s.%s" integer-part fractional-part))))
-
 (defn- fetch-code-info [code-attrs-map]
   (let [{account "PersAcc"
          bill-id "QuittID"
          sum "Sum"
          } code-attrs-map]
-    {:account account :bill-id bill-id :sum (convert-sum sum)}
-    ))
+    {:account account :bill-id bill-id :amount sum}))
 
 (defn recognize-code
   "Try to recognize input `raw-qr-code-str` by `schemas` list
@@ -65,7 +57,7 @@
   `:parsing-schema` has been used for grabbing attributes from string-like qr code"
   [raw-qr-code-str schemas]
   (when-let [code-attrs (attr-map raw-qr-code-str)]
-    (let [{company-group :result} (recognize-qr-code code-attrs schemas)]
+    (when-let [{company-group :result} (recognize-qr-code code-attrs schemas)]
       {:result (assoc company-group :code-info (fetch-code-info code-attrs))
        :parsing-info code-attrs}
       )))

@@ -1,0 +1,86 @@
+ [
+   {:group :lights
+    :linear {
+             :recognizing-scheme {
+                                  :barcode-length 44
+                                  :prefix ["34020" "34021" "34022"]
+                                  }
+             :parsing-scheme {
+                              :account { :offset 5 :count 9 }
+                              :id-bill { :offset 14 :count 18 }
+                              :amount { :offset 33 :count 7 }
+                              }
+             }
+    :qr-code {:recognizing-scheme {:company-name "ООО \"Огоньки\"" }}
+    :location :kstovo
+    :additional-info {:debt? false :meters? false}
+    }
+
+   {:group :kassir-dzr
+    :linear {
+             :recognizing-scheme {
+                                  :barcode-length 40
+                                  :prefix ["01609", "01611","01607"]
+             }
+             :parsing-scheme {
+                              :account { :offset 5 :count 6 }
+                              :id-bill { :offset 11 :count 18 }
+                              :amount  { :offset 29 :count 7 }
+                              }
+             }
+    :qr-code {:recognizing-scheme {:company-name "ООО Кассир"}}
+    :location :dzr
+    :additional-info { :meters? true }
+    }
+
+   {:group :kassir-kstovo
+    :linear {
+             :recognizing-scheme {
+                                  :barcode-length 44
+                                  :prefix ["19336"]
+                                  }
+             :parsing-scheme {
+                              :account { :offset 5 :count 9 }
+                              :id-bill { :offset 14 :count 18 }
+                              :amount  { :offset 33 :count 7 }
+                              }
+             }
+    :qr-code {:recognizing-scheme {:company-name "ООО Кассир Кстово" }}
+    :location :kstovo
+    :additional-info {:meters? true}
+    }
+
+    {:group :jk
+     :linear {
+              :recognizing-scheme {
+                                   :barcode-length 40
+                                   :prefix ["00000"]
+                                   }
+              :parsing-scheme {
+                               :account { :offset 5 :count 6 }
+                               :id-bill { :offset 11 :count 18 }
+                               :amount  { :offset 29 :count 7 }
+                               }
+              }
+     :qr-code {:recognizing-scheme {:company-name "ЖэКа" }}
+     :location :dzr
+     :additional-info {:meters? true}
+     }
+
+    {:group :watermelon
+     :linear {
+              :recognizing-scheme {
+                                   :barcode-length 40
+                                   :prefix ["15401"]
+                                   }
+              :parsing-scheme {
+                               :account { :offset 5 :count 6 }
+                               :id-bill { :offset 11 :count 18 }
+                               :amount  { :offset 29 :count 7 }
+                               }
+              }
+     :qr-code {:recognizing-scheme {:company-name "Водоканал" }}
+     :location :dzr
+     :additional-info {:meters? true}
+     }
+   ]

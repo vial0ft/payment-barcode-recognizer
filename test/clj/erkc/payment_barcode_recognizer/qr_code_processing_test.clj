@@ -26,4 +26,11 @@
           result (qr-proc/recognize-code raw-str-qr-code [qr-code-recognizing-scheme])]
       (is (contains? result :result)))
     )
+
+ (testing "nil if there is no compatible scheme"
+   (let [raw-str-qr-code "BRAH|Name=Unknown Company Name|Sum=10000"
+         qr-code-recognizing-scheme (gens/gen-recognizing-code-scheme :qr-code  {:company-name "BLA BLA NAME"})
+         result (qr-proc/recognize-code raw-str-qr-code [qr-code-recognizing-scheme])]
+     (is (nil? result)))
+   )
 )

@@ -44,10 +44,10 @@
    {
     :account { :offset 5 :count 6 }
     :id-bill { :offset 11 :count 18 }
-    :sum-bill { :offset 29 :count 7 }
+    :amount  { :offset 29 :count 7 }
    }
    ```
-   as result return a map with keys `[:account :id-bill :sum-bill]`
+   as result return a map with keys `[:account :id-bill :amount]`
    or `nil`"
 
   [raw-str-linear-code parsing-schema]
