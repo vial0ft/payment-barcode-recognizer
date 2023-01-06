@@ -3,12 +3,23 @@
 
 -- :name get-barcode-by-bill-id :? :1
 -- :doc returns a barcode by bill-id
-SELECT bill_id, account, amount, created_at  FROM barcodes WHERE bill_id = :id
+SELECT bill_id, account, amount, created_at, "group", location
+ FROM barcodes
+ WHERE bill_id = :id::bigint
 
 
 -- :name get-barcodes-by-account :? :*
 -- :doc returns a barcodes by account
-SELECT * FROM barcodes WHERE account  = :account
+SELECT bill_id, account, amount, created_at, "group", location
+ FROM barcodes
+ WHERE account  = :account::int
+
+-- :name get-barcodes-by-period :? *
+-- :doc returns a barcodes by period from :begin-date to :end-date
+SELECT bill_id, account, amount, created_at, "group", location
+ FROM barcodes
+ WHERE created_at BETWEEN :begin-date::timestamp AND :end-date::timestamp
+
 
 -- :name add-barcode :! :n
 -- :doc add scanned barcode

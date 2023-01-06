@@ -11,6 +11,11 @@
 (def schema-file (io/file "./companies-schemas.edn"))
 (defonce recognizing-schemas (edn/read (java.io.PushbackReader. (io/reader schema-file))))
 
+
+(defn- http-result [result]
+  ((if (contains? result :error) http-response/bad-request
+    http-response/ok) result))
+
 (defn recognize-code
   [req]
   (let [{{code :code} :body-params} req
@@ -21,10 +26,17 @@
         (if (not recognizing-result) (http-response/bad-request! {:error "Cant recognize barcode" :input code})
             (let [{:keys [result parsing-info]} recognizing-result
                   storing-result (db/store-barcode-info query-fn result parsing-info)]
-              (cond
-                    (contains? storing-result :error) (http-response/bad-request storing-result)
-                    :else (http-response/ok result))
-            ))
-      ))))
+              (http-result storing-result)
+              ))
+        ))))
+
+
+(defn fetch-history
+  [req]
+  (let [filter-type (get-in req [:path-params :filter-type])
+        path-params (:query-params req)
+        {:keys [query-fn]} (utils/route-data req)
+        result (db/fetch-history query-fn filter-type path-params)]
+    (http-result result)))
 
 

@@ -20,7 +20,10 @@
    ["/health"
     {:get health/healthcheck!}]
    ["/recognize"
-    {:post recognizer/recognize-code}]])
+    {:post recognizer/recognize-code}]
+   ["/history/:filter-type"
+    {:get recognizer/fetch-history}]
+   ])
 
 (defn route-data
   [opts]
