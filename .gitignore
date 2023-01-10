@@ -17,3 +17,5 @@ pom.xml.asc
 /modules
 .#build.clj
 .idea
+.shadow-cljs
+node_modules

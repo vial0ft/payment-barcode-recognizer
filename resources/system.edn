@@ -52,4 +52,6 @@
                      :migrate-on-init? true}
  :db.sql/connection #profile {:dev {:jdbc-url "jdbc:postgresql://localhost:5432/postgres?user=postgres&password=12345678"},
                               :test {:jdbc-url "jdbc:postgresql://localhost:5432/payment-barcode-recognizer_test?user=payment-barcode-recognizer&password=payment-barcode-recognizer"},
-                              :prod {:jdbc-url #env JDBC_URL}}}
+                              :prod {:jdbc-url #env JDBC_URL}}
+ :reitit.routes/pages {:base-path "",
+                       :env #ig/ref :system/env}}
