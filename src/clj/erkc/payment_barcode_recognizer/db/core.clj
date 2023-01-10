@@ -4,17 +4,17 @@
 
 
 
-(defn store-barcode-info [query-fn {:keys [group location code-info]} parsing-info]
-  (let [_ (log/debug code-info)
+(defn store-barcode-info [query-fn {:keys [group location code-info] :as recognizing-info} parsing-info]
+  (let [created-at (java.time.LocalDateTime/now)
         barcode-record (assoc code-info
                         :barcode-info (json/encode parsing-info)
-                        :created-at (java.time.LocalDateTime/now)
+                        :created-at created-at
                         :group (str group)
                         :location (str location))]
     (try
       (do
         (query-fn :add-barcode barcode-record)
-        {:ok barcode-record})
+        (assoc recognizing-info :created-at (str created-at)))
       (catch Exception e {:error "Cant store barcode" :cause (.getMessage e)}))))
 
 

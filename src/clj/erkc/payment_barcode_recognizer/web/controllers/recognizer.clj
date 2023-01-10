@@ -26,7 +26,7 @@
         (if (not recognizing-result) (http-response/bad-request! {:error "Cant recognize barcode" :input code})
             (let [{:keys [result parsing-info]} recognizing-result
                   storing-result (db/store-barcode-info query-fn result parsing-info)]
-              (http-result storing-result)
+              (http-result result)
               ))
         ))))
 
