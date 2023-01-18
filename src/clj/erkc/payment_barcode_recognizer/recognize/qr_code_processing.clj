@@ -21,7 +21,10 @@
       (let [schema (first schemas)
             recognizing-rules (get-in schema [:qr-code :recognizing-scheme])]
         (if (compatible-by-scheme? recognizing-rules attrs)
-          {:result (select-keys schema [:group :location :additional-info])}
+          {:result {
+                    :group-info (select-keys schema [:group :location])
+                    :additional-info (:additional-info schema)
+                    }}
             (recur attrs (next schemas))))))
 
 (defn- attr-map

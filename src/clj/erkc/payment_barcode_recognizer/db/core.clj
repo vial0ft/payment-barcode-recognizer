@@ -3,9 +3,12 @@
             [clojure.tools.logging :as log]))
 
 
+(defn- filter-fields [record]
+    (select-keys record [:group :location :created-at :account :bill-id :amount]))
 
-(defn store-barcode-info [query-fn {:keys [group location code-info] :as recognizing-info} parsing-info]
-  (let [created-at (java.time.LocalDateTime/now)
+(defn store-barcode-info [query-fn recognizing-info parsing-info]
+  (let [{{:keys [group location]} :group-info code-info :code-info} recognizing-info
+        created-at (java.time.LocalDateTime/now)
         barcode-record (assoc code-info
                         :barcode-info (json/encode parsing-info)
                         :created-at created-at
@@ -14,7 +17,8 @@
     (try
       (do
         (query-fn :add-barcode barcode-record)
-        (assoc recognizing-info :created-at (str created-at)))
+        ;;(assoc recognizing-info :created-at (str created-at))
+        (filter-fields barcode-record))
       (catch Exception e {:error "Cant store barcode" :cause (.getMessage e)}))))
 
 
@@ -25,7 +29,7 @@
     :bill :get-barcode-by-bill-id
     :else nil))
 
-(defn keys-as-keywords [args-map]
+(defn- keys-as-keywords [args-map]
   (reduce-kv (fn [m k v] (assoc m (keyword k) v)) {} args-map))
 
 (defn fetch-history [query-fn filter-type args-map]

@@ -33,7 +33,10 @@
     (let [schema (first schemas)
           recognizing-rules (get-in schema [:linear :recognizing-scheme])]
       (if (compatible-by-scheme? raw-str-linear-code recognizing-rules)
-        {:result (select-keys schema [:group :location :additional-info])
+        {:result {
+                  :group-info (select-keys schema [:group :location])
+                  :additional-info (:additional-info schema)
+                  }
          :parsing-schema (get-in schema [:linear :parsing-scheme])}
         (recur raw-str-linear-code (next schemas))))))
 
