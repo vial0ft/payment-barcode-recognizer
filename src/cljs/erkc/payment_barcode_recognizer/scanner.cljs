@@ -8,10 +8,10 @@
 
 (defonce qrcodeRegionId "html5qr-code-full-region")
 
-(defn create-config [props]
+(defn- create-config [props]
   (select-keys props [:fps :qrbox :aspectRatio :disableFlip]))
 
-(defn scanner-component [props]
+(defn Scanner [props]
     (reagent/create-class
      {
       :display-name "scanner-component"
