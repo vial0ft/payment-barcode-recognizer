@@ -4,7 +4,7 @@
       [reagent.dom :as d]
       [clojure.string :as str]
       [erkc.payment-barcode-recognizer.scanner :refer (Scanner)]
-      [erkc.payment-barcode-recognizer.barcode-info :refer (BarcodeInfo)]
+      [erkc.payment-barcode-recognizer.barcode-info :refer (LastBarcodeInfo)]
       [erkc.payment-barcode-recognizer.companies-table :refer (CompaniesTable)]
       [erkc.payment-barcode-recognizer.api :as api]
       [erkc.payment-barcode-recognizer.datetime-utils :as dtu]))
@@ -37,8 +37,7 @@
 (defn- replace-last-recognized-barcode [last-recognized-code-store recognized-barcode]
   (reset! last-recognized-code-store recognized-barcode))
 
-(defn- confirmation-str
-  [{code-info :code-info}]
+(defn- confirmation-str [{code-info :code-info}]
   (str/join "\n" (map (fn [attr] (str (first attr) " : " (second attr))) (vec code-info))))
 
 (defn- confirmed-barcode? [recognized-barcode]
@@ -89,7 +88,7 @@
 
    (fn [resp] (reset! companies-store (reduce-history-records resp)))
 
-   (fn [err] (.log js/console err))))
+   (fn [err] (.err js/console err))))
 ;; ----------------------
 ;; Handlers
 
@@ -107,12 +106,11 @@
 
 (defn error-handler
   "Handler for error response"
-  []
-  (fn [{:keys [status status-text] :as err-resp}]
+  [err-resp]
   (do
-    (.log js/console (str "something bad happened: " status " " status-text " " err-resp))
+    (.log js/console (str "something bad happened: " err-resp))
     (js/alert err-resp)
-    )))
+    ))
 
 
 (defn onScanSuccess
@@ -127,17 +125,6 @@
 ;; -------------------------
 ;; Views
 
-(defn- LastBarcodeInfo [{:keys [group-info code-info additional-info]}]
-  [:div {:style {
-                 :position "fixed"
-                 :bottom "1%"
-                 :width "100%"
-                 :opacity 1
-                 }}
-     [:h4 "Last recognized:"]
-     [BarcodeInfo group-info code-info additional-info]
-   ])
-
 (defn home-page []
   (let [companies-store companies-table
         last-recognized-code-store last-recognized]
@@ -146,9 +133,7 @@
       [:div
        [:div {:style {:display "flex" :flex-wrap "nowrap" }}
         [:div {:style {:margin-right 10 :width "50%" }}
-         [CompaniesTable @companies-store]
-         ;;[:p (str @companies-store)]
-         ]
+         [CompaniesTable @companies-store]]
         [:div {:style {:margin-left 10 :width "50%" }}
          [Scanner {
                    :fps 10
@@ -157,7 +142,7 @@
                    :qrCodeSuccessCallback (onScanSuccess last-recognized-code-store companies-store)
                    }]]]
        [LastBarcodeInfo @last-recognized]])))
-;; ----m---------------------
+;; --------------------------
 ;; Initialize app
 
 (defn ^:dev/after-load mount-root []

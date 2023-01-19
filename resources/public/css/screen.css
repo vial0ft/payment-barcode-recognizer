@@ -1,0 +1,27 @@
+.companies-table-grid-container {
+    display: grid;
+    grid-template-columns: auto auto auto;
+}
+
+.companies-table-grid-item {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.last-barcode-grid-container {
+    display: grid;
+    grid-template-columns: auto auto auto;
+}
+
+.last-barcode-grid-item {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+}
