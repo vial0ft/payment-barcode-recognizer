@@ -16,7 +16,7 @@ SELECT bill_id, account, amount, created_at, "group", location
 
 -- :name get-barcodes-by-period :? *
 -- :doc returns a barcodes by period from :begin-date to :end-date
-SELECT bill_id, account, amount, created_at, "group", location
+SELECT bill_id as "bill-id", account, amount, created_at as "created-at", "group", location
  FROM barcodes
  WHERE created_at BETWEEN :begin-date::timestamp AND :end-date::timestamp
 
