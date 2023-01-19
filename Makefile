@@ -2,13 +2,13 @@ clean:
 	rm -rf target
 
 run:
-	clj -M:dev
+	clojure -M:dev
 
 repl:
-	clj -M:dev:nrepl
+	clojure -M:dev:nrepl
 
 test:
-	clj -M:test
+	clojure -M:test
 
 uberjar:
-	clj -T:build all
+	clojure -T:build all

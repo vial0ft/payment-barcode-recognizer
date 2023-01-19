@@ -1,8 +1,10 @@
 # syntax = docker/dockerfile:1.2
-FROM clojure:openjdk-17 AS build
+FROM clojure:temurin-19-tools-deps-1.11.1.1208-bullseye-slim AS build
 
 WORKDIR /
 COPY . /
+
+RUN apt-get update && apt-get -y install nodejs npm
 
 RUN clj -Sforce -T:build all
 
