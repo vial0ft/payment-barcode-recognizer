@@ -8,7 +8,7 @@
             [clojure.edn :as edn]
            ))
 
-(def schema-file (io/file "./companies-schemas.edn"))
+(def schema-file (io/resource "companies-schemas.edn"))
 (defonce recognizing-schemas (edn/read (java.io.PushbackReader. (io/reader schema-file))))
 
 (defn- struct-history-record [record]
