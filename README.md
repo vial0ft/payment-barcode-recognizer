@@ -7,7 +7,7 @@ Barcodes recognize according information in the file `resources/companies-schema
 ## Dependensies
 ### Server
 - [kit-clj](https://kit-clj.github.io/) 
-- [PosgreSQL](https://www.postgresql.org/) from (kit-postgres)[https://clojars.org/io.github.kit-clj/kit-postgres] 
+- [PosgreSQL](https://www.postgresql.org/) from [kit-postgres](https://clojars.org/io.github.kit-clj/kit-postgres) 
 
 ### Frontend
 - [Reagent](https://reagent-project.github.io/)
