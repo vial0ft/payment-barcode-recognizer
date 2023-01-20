@@ -6,17 +6,17 @@ Barcodes recognize according information in the file `resources/companies-schema
 
 ## Dependensies
 ### Server
-- kit-clj
-- PosgreSQL DB
+- [kit-clj](https://kit-clj.github.io/) 
+- [PosgreSQL](https://www.postgresql.org/) from (kit-postgres)[https://clojars.org/io.github.kit-clj/kit-postgres] 
 
 ### Frontend
-- Reagent
-- html5-qrcode
-- cljs-ajax
+- [Reagent](https://reagent-project.github.io/)
+- [html5-qrcode](https://github.com/mebjas/html5-qrcode)
+- [cljs-ajax](https://github.com/JulianBirch/cljs-ajax)
 
 ## Build
 
-`clojure -Sforce -T:build all`
+As a standalone application `clojure -Sforce -T:build all`
 
 
 ## P.S.
