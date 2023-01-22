@@ -1,4 +1,4 @@
-(ns erkc.payment-barcode-recognizer.datetime-utils
+(ns erkc.payment-barcode-recognizer.utils.datetime-utils
   (:require [clojure.string :as str]))
 
 

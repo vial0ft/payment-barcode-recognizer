@@ -1,4 +1,6 @@
-(ns erkc.payment-barcode-recognizer.companies-table)
+(ns erkc.payment-barcode-recognizer.companies-table
+  (:require
+   [erkc.payment-barcode-recognizer.utils.big-decimal-utils :as bigdec]))
 
 (defn- HeaderRow []
   [
@@ -8,9 +10,10 @@
 
 (defn- TableRow [company count amount]
   [
-   [:div.companies-table-grid-item company]
-   [:div.companies-table-grid-item count]
-   [:div.companies-table-grid-item amount]])
+   [:div.companies-table-grid-item (if (or (nil? company) (empty? company)) "-" company)]
+   [:div.companies-table-grid-item (if (or (nil? count) (zero? count)) "-" count)]
+   [:div.companies-table-grid-item (if (or (nil? amount) (bigdec/equals? amount (bigdec/zero))) "-"
+                                     (bigdec/pretty-value amount 3 " "))]])
 
 
 (defn- TotalRow [{:keys [amount count]}]
@@ -35,8 +38,10 @@
 (defn total-stat [companies]
   (reduce (fn [acc {:keys [amount count]}]
             (-> acc
-                (update :amount + amount)
-                (update :count + count))) {:amount 0.0M :count 0} (vals companies)))
+                (update :amount bigdec/add amount)
+                (update :count + count)))
+          {:amount (bigdec/zero) :count 0}
+          (vals companies)))
 
 (defn CompaniesTable [companies]
   (let [companies-stat-rows  (transform-to-rows companies)
