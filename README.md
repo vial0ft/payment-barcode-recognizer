@@ -21,7 +21,8 @@ As a standalone application `clojure -Sforce -T:build all`
 ## Production environment variables:
 
 `PORT` - by default `3000`
-`HTTP_HOST` - by default "0.0.0.0"
+
+`HTTP_HOST` - by default `0.0.0.0`
 
 ## Docker
 
