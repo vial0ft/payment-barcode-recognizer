@@ -18,6 +18,14 @@ Barcodes recognize according information in the file `resources/companies-schema
 
 As a standalone application `clojure -Sforce -T:build all`
 
+## Docker
+
+For run as a docker container you have to set environment valiable `JDBC_URL` which is url to postgreSQL DB e.g:
+```
+jdbc:postgresql://<db-host>:<db-port>/<db-name>?user=<user>&password=<password>
+```
+For more details look into `Dockerfile`
+
 
 ## P.S.
 That is naive implementation my previous java project with clojure. And it defenetly is !NOT READY FOR PRODUCTION USAGE! 
