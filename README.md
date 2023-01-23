@@ -18,6 +18,11 @@ Barcodes recognize according information in the file `resources/companies-schema
 
 As a standalone application `clojure -Sforce -T:build all`
 
+## Production environment variables:
+
+`PORT` - by default `3000`
+`HTTP_HOST` - by default "0.0.0.0"
+
 ## Docker
 
 For run as a docker container you have to set environment valiable `JDBC_URL` which is url to postgreSQL DB e.g:
@@ -30,4 +35,3 @@ For more details look into `Dockerfile`
 ## P.S.
 That is naive implementation my previous java project with clojure. And it defenetly is !NOT READY FOR PRODUCTION USAGE! 
 Unlike the previous desktop version, recognizing is a clojure web services with clojurescript and [Reagent](https://reagent-project.github.io/) on a frontend.
-It can be deployed as a docker container.
