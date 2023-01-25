@@ -19,3 +19,4 @@ pom.xml.asc
 .idea
 .shadow-cljs
 node_modules
+payment-barcode-recognizer.iml
