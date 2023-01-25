@@ -1,4 +1,4 @@
-(ns erkc.payment-barcode-recognizer.scanner
+(ns erkc.payment-barcode-recognizer.components.scanner
   (:require
    [reagent.core :as reagent]
    [reagent.dom :as d]

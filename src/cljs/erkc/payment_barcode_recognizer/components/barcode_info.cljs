@@ -1,10 +1,10 @@
-(ns erkc.payment-barcode-recognizer.barcode-info)
+(ns erkc.payment-barcode-recognizer.components.barcode-info)
 
 (defn- HeaderRow []
   [
-   [:div.last-barcode-grid-item "Company"]
-   [:div.last-barcode-grid-item "Barcode Info"]
-   [:div.last-barcode-grid-item "Additional Info"]])
+   [:div.last-barcode-header-grid-item "Company"]
+   [:div.last-barcode-header-grid-item "Barcode Info"]
+   [:div.last-barcode-header-grid-item "Additional Info"]])
 
 (defn- TableRow [company barcode-info additional-info]
   [
