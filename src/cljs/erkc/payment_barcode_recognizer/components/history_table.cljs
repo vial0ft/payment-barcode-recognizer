@@ -26,14 +26,18 @@
          acc []]
     (if-not records
       acc
-      (let [_ (println (str/join "\n"  (first records)))]
-        (recur (next records) (into acc (HistoryTableRow (first records)))))
+        (recur (next records) (into acc (HistoryTableRow (first records))))
       )))
 
 
 (defn HistoryTable [barcode-records]
-  (let [history-rows (if (empty? barcode-records) [] (transform-to-rows barcode-records))]
-    (-> [:div.history-table-grid-container]
+  (let [history-rows (if (empty? barcode-records) []
+                         (->> barcode-records
+                             (transform-to-rows)))]
+    [:div
+     [:h2 "Scanned barcodes history"]
+     (-> [:div.history-table-grid-container]
         (into (HistoryHeaderRow))
         (into history-rows)
-        )))
+        )]
+    ))

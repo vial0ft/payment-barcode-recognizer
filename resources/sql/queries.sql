@@ -20,6 +20,11 @@ SELECT bill_id as "bill-id", account, amount, created_at as "created-at", "group
  FROM barcodes
  WHERE created_at BETWEEN :begin-date::timestamp AND :end-date::timestamp
 
+-- :name get-barcodes-by-predicate :? *
+-- :doc returns a barcodes by predicate :where
+SELECT bill_id as "bill-id", account, amount, created_at as "created-at", "group", location
+ FROM barcodes
+ where :sql:predicate
 
 -- :name add-barcode :! :n
 -- :doc add scanned barcode

@@ -1,6 +1,7 @@
 (ns erkc.payment-barcode-recognizer.db.core
   (:require [cheshire.core :as json]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [clojure.string :as str]))
 
 
 (defn- filter-fields [record]
@@ -27,15 +28,44 @@
     :period :get-barcodes-by-period
     :account :get-barcodes-by-account
     :bill :get-barcode-by-bill-id
+    :filter :get-barcodes-by-predicate
     :else nil))
+
+
+(defn- build-condition [[key value]]
+  (case key
+    :account (if-not (empty? value) (format "account::text like '%%%s%%'" value) "true")
+    :bill-id (if-not (empty? value) (format "bill_id::text like '%%%s%%'" value) "true")
+    :period (let [{:keys [from-date to-date]} value]
+              (if-not (empty? from-date)
+                (format
+                 "created_at between '%s' and '%s'"
+                 from-date
+                 (if-not (empty? to-date)
+                   to-date
+                   (.toString (java.time.LocalDate/now))))
+                "true"))
+    :else "true"))
+
 
 (defn- keys-as-keywords [args-map]
   (reduce-kv (fn [m k v] (assoc m (keyword k) v)) {} args-map))
 
+(defmulti barcode-query-condition (fn [query-type _args] query-type))
+
+(defmethod barcode-query-condition :get-barcodes-by-predicate [query-type args]
+  {:predicate (str/join " AND " (->> (keys-as-keywords args)
+                                     (map (fn [el] [(first el) (second el)]))
+                                     (map build-condition)))})
+
+(defmethod barcode-query-condition :default  [query-type args]
+  (keys-as-keywords args))
+
 (defn fetch-history [query-fn filter-type args-map]
-  (let [query-name (query-by-filter filter-type)]
+  (let [query-name (query-by-filter filter-type)
+        query-args (barcode-query-condition query-name args-map)]
     (try
-      (query-fn query-name (keys-as-keywords args-map))
+      (query-fn query-name query-args)
       (catch Exception e {
                           :error (format "Cant fetch history by filter %s params %s" filter-type args-map)
                           :cause (.getMessage e)})
