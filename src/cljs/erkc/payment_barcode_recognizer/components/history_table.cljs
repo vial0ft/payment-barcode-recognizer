@@ -1,6 +1,6 @@
 (ns erkc.payment-barcode-recognizer.components.history-table
-  (:require [clojure.string :as str]
-            [erkc.payment-barcode-recognizer.utils.big-decimal-utils :as bigdec]))
+  (:require 
+   [erkc.payment-barcode-recognizer.utils.big-decimal-utils :as bigdec]))
 
 
 

@@ -49,24 +49,11 @@
               ))
         ))))
 
-
-(defn fetch-history
-  [req]
-  (let [filter-type (get-in req [:path-params :filter-type])
-        path-params (:query-params req)
-        _ (log/debug path-params)
-        {:keys [query-fn]} (utils/route-data req)
-        result (db/fetch-history query-fn filter-type path-params)
-        _ (log/debug result)]
-    (http-result result)))
-
-
 (defn fetch-history-with-filter
   [req]
-  (let [filter-type (get-in req [:path-params :filter-type])
-        filter (get-in req [:body-params :filter])
+  (let [filter (get-in req [:body-params :filter])
         {:keys [query-fn]} (utils/route-data req)
-        result (db/fetch-history query-fn filter-type filter)]
+        result (db/fetch-history query-fn filter)]
        (http-result result)))
 
 

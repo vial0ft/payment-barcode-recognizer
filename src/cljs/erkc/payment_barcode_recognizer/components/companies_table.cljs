@@ -20,7 +20,7 @@
   (TableRow "Total" count amount))
 
 
-(defn transform-to-rows [companies]
+(defn- transform-to-rows [companies]
   (loop [companies-groups companies
          acc []]
     (if-not companies-groups
@@ -35,7 +35,7 @@
          )))
     ))
 
-(defn total-stat [companies]
+(defn- total-stat [companies]
   (reduce (fn [acc {:keys [amount count]}]
             (-> acc
                 (update :amount bigdec/add amount)

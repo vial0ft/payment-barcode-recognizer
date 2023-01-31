@@ -21,9 +21,8 @@
     {:get health/healthcheck!}]
    ["/recognize"
     {:post recognizer/recognize-code}]
-   ["/history/:filter-type"
-    {:get recognizer/fetch-history
-     :post recognizer/fetch-history-with-filter}]
+   ["/history/filter"
+    {:post recognizer/fetch-history-with-filter}]
    ])
 
 (defn route-data

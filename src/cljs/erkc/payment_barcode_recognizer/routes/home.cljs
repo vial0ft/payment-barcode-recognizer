@@ -6,9 +6,8 @@
    [erkc.payment-barcode-recognizer.components.barcode-info :refer (LastBarcodeInfo)]
    [erkc.payment-barcode-recognizer.components.companies-table :refer (CompaniesTable)]
    [erkc.payment-barcode-recognizer.api :as api]
-   [erkc.payment-barcode-recognizer.utils.datetime-utils :as dtu]
    [erkc.payment-barcode-recognizer.utils.big-decimal-utils :as bigdec]
-   [erkc.payment-barcode-recognizer.utils.formats :as f]))
+   [erkc.payment-barcode-recognizer.utils.mappers :as m]))
 
 ;; -------------------------
 ;; States
@@ -42,24 +41,9 @@
 (defn- confirmed-barcode? [recognized-barcode]
   (js/confirm (confirmation-str recognized-barcode)))
 
-(defn- map-barcode-record [record]
-  {
-   :group-info (str {
-                :group (:group record)
-                :location (:location record)
-                })
-   :code-info {
-               :account (:account record)
-               :bill-id (:bill-id record)
-               :amount (f/amount-map (:amount record))
-               }
-   :additional-info (:additional-info record)
-   :created-at (:created-at record)
-   })
-
 (defn- reduce-history-records [records]
   (reduce (fn [acc record]
-            (let [{:keys [group-info code-info]} (map-barcode-record record)]
+            (let [{:keys [group-info code-info]} (m/map-barcode-record-for-home-page record)]
               (-> acc
                   (update-in [group-info :amount] bigdec/add (:amount code-info))
                   (update-in [group-info :count] inc))
@@ -72,7 +56,7 @@
   "Response handler with recognized bar-code"
   [last-recognized-code-store companies-store]
   (fn [resp]
-    (let [recognized-barcode (map-barcode-record resp)]
+    (let [recognized-barcode (m/map-barcode-record-for-home-page resp)]
       (when (confirmed-barcode? recognized-barcode)
         (do
           (replace-last-recognized-barcode last-recognized-code-store recognized-barcode)
@@ -95,18 +79,15 @@
      error-handler)))
 
 
-(defn- load-today-history! [companies-store]
-  (api/get-today-history
-   (-> (dtu/offset-date)
-       (dtu/start-of-date)
-       (dtu/to-date))
+(defn- handle-history-responce
+  "Handler for success fetching of history"
+  [store]
+  (fn [resp] (reset! store (reduce-history-records resp))))
 
-   (-> (dtu/offset-date)
-       (dtu/add-days 1)
-       (dtu/to-date))
 
-   (fn [resp] (reset! companies-store (reduce-history-records resp)))
-
+(defn- load-today-history [companies-store]
+  (api/load-today-history
+   (handle-history-responce companies-store)
    error-handler))
 
 
@@ -116,7 +97,7 @@
 (defn home-page []
   (let [companies-store companies-table
         last-recognized-code-store last-recognized]
-    (load-today-history! companies-store)
+    (load-today-history companies-store)
     (fn []
       [:div
        [:div {:style {:display "flex" :flex-wrap "nowrap" }}

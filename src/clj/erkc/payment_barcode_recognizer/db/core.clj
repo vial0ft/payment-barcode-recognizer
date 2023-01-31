@@ -23,15 +23,6 @@
       (catch Exception e {:error "Cant store barcode" :cause (.getMessage e)}))))
 
 
-(defn- query-by-filter [filter-type]
-  (case (keyword filter-type)
-    :period :get-barcodes-by-period
-    :account :get-barcodes-by-account
-    :bill :get-barcode-by-bill-id
-    :filter :get-barcodes-by-predicate
-    :else nil))
-
-
 (defn- build-condition [[key value]]
   (case key
     :account (if-not (empty? value) (format "account::text like '%%%s%%'" value) "true")
@@ -51,23 +42,16 @@
 (defn- keys-as-keywords [args-map]
   (reduce-kv (fn [m k v] (assoc m (keyword k) v)) {} args-map))
 
-(defmulti barcode-query-condition (fn [query-type _args] query-type))
-
-(defmethod barcode-query-condition :get-barcodes-by-predicate [query-type args]
+(defn- barcode-query-condition [args]
   {:predicate (str/join " AND " (->> (keys-as-keywords args)
                                      (map (fn [el] [(first el) (second el)]))
                                      (map build-condition)))})
 
-(defmethod barcode-query-condition :default  [query-type args]
-  (keys-as-keywords args))
-
-(defn fetch-history [query-fn filter-type args-map]
-  (let [query-name (query-by-filter filter-type)
-        query-args (barcode-query-condition query-name args-map)]
-    (try
-      (query-fn query-name query-args)
-      (catch Exception e {
-                          :error (format "Cant fetch history by filter %s params %s" filter-type args-map)
-                          :cause (.getMessage e)})
-      )))
+(defn fetch-history [query-fn args-map]
+  (try
+    (query-fn :get-barcodes-by-predicate (barcode-query-condition args-map))
+    (catch Exception e {
+                        :error (format "Cant fetch history by params %s" args-map)
+                        :cause (.getMessage e)})
+    ))
 

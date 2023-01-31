@@ -4,6 +4,8 @@
 
 
 
+;; -------------------------
+;; States
 
 (def filter-form (r/atom {
                           :account ""
@@ -12,10 +14,15 @@
                           :to-date ""
                           }))
 
+;; -------------------------
+;; Cursors
+
 (defn filter-form-cursor [field]
   (r/cursor filter-form [field]))
 
 
+;; -------------------------
+;; Views
 
 (defn- filter-item [{:keys [item-key lable-text input-type]}]
   [:div {:style {:margin "5px" :display "flex"}}
@@ -28,19 +35,19 @@
             :on-change #(reset! (filter-form-cursor (keyword item-key)) (.-value (.-target %)))}]
    ])
 
-(defn account-bill-filter-item-block []
+(defn- account-bill-filter-item-block []
   [:div {:style {:margin-right 10 :width "50%" }}
    (filter-item {:item-key "account" :lable-text "Account: " :input-type "text"})
    (filter-item {:item-key "bill-id" :lable-text "Bill: " :input-type "text"})
    ])
 
-(defn date-period-filter-item-block []
+(defn- date-period-filter-item-block []
   [:div {:style {:margin-right 10 :width "50%" }}
    (filter-item {:item-key "from-date" :lable-text "From date: " :input-type "date"})
    (filter-item {:item-key "to-date" :lable-text "To date: " :input-type "date"})
    ])
 
-(defn filter-apply-button [filter-callback]
+(defn- filter-apply-button [filter-callback]
   [:input {:type "button"
            :value "Apply filter"
            :on-click #(filter-callback @filter-form)}])
