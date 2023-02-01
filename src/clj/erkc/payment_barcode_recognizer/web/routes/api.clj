@@ -9,20 +9,45 @@
     [reitit.ring.coercion :as coercion]
     [reitit.ring.middleware.muuntaja :as muuntaja]
     [reitit.ring.middleware.parameters :as parameters]
-    [reitit.swagger :as swagger]))
+    [reitit.swagger :as swagger]
+    [reitit.swagger-ui :as swagger-ui]))
+
+
+;; TODO: Fix swagger https://cljdoc.org/d/metosin/reitit-schema/0.5.2/doc/ring/pluggable-coercion
 
 ;; Routes
-(defn api-routes [_opts]
+(defn api-routes [opts]
   [["/swagger.json"
     {:get {:no-doc  true
-           :swagger {:info {:title "erkc.payment-barcode-recognizer API"}}
+           :swagger {:info {:title "Barcode recognizer API"}}
            :handler (swagger/create-swagger-handler)}}]
+   ["/swagger-ui/*"
+    {:get {:no-doc true
+           :handler (swagger-ui/create-swagger-ui-handler {:url (str (:base-path opts) "/swagger.json") })}}]
    ["/health"
     {:get health/healthcheck!}]
    ["/recognize"
-    {:post recognizer/recognize-code}]
+    {:post {:summary "recognize barcode"
+            :parameters {:body {:code string?}}
+            :description "Try recognize barcode in `code` field"
+            :responses {200 {:body
+                             {:group string?
+                              :location string?
+                              :created-at string?
+                              :account int?
+                              :bill-id int?
+                              :amount decimal?}}}
+            :handler recognizer/recognize-code}}]
    ["/history/filter"
-    {:post recognizer/fetch-history-with-filter}]
+    {:post {:summary "Fetch history"
+            :parameters {:body {:filter {
+                                         :account string?
+                                         :bill-id string?
+                                         :period {:from-date string? :to-date string?}
+                                         }}}
+            :description "Fetch history of scanned barcodes by `filter`"
+            :responses {200 {:body list?}}
+            :handler recognizer/fetch-history-with-filter}}]
    ])
 
 (defn route-data
@@ -55,4 +80,6 @@
   [_ {:keys [base-path]
       :or   {base-path ""}
       :as   opts}]
-  [base-path (route-data opts) (api-routes opts)])
+  [base-path
+   (route-data opts)
+   (api-routes opts)])
