@@ -4,6 +4,11 @@ Web service recognizing barcode of payment receipt. It works fine with linear ba
 Barcodes recognize according information in the file `resources/companies-schemas.edn`. It's possible to add new schemas and describe **how to recognize** some barcode by some **trait** (e.g. the name of the company) and also describe **parsing-schema** in the case of linear barcode. Specific of payment receipt recognizing is that the receipt have to contain `account`, `bill-id` and `amount`.
 
 
+
+## Swagger
+
+Swagger is available by endpoint `/api/swagger-ui` 
+
 ## Dependensies
 ### Server
 - [kit-clj](https://kit-clj.github.io/) 
