@@ -1,5 +1,9 @@
 name: Test and Package project
-on: [push]
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 jobs:
   clojure:
     runs-on: ubuntu-latest
@@ -29,6 +33,3 @@ jobs:
 
       - name: Run Unit tests
         run: clojure -X:test/run
-
-      - name: Package Clojure project
-        run: clojure -X:project/uberjar
