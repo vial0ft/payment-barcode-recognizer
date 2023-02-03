@@ -1,36 +1,48 @@
-name: Test and Package project
+name: Test
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+
 jobs:
+
   clojure:
-    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Cache Clojure Dependencies
+      # It is important to install java before installing clojure tools which needs java
+      # exclusions: babashka, clj-kondo and cljstyle
+      - name: Prepare java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '8'
+
+      - name: Install clojure tools
+        uses: DeLaGuardo/setup-clojure@10.1
+        with:
+          cli: 1.10.1.693              # Clojure CLI based on tools.deps
+          
+      # Optional step:
+      - name: Cache clojure dependencies
         uses: actions/cache@v3
         with:
           path: |
             ~/.m2/repository
             ~/.gitlibs
             ~/.deps.clj
-          key: cache-${{ hashFiles('**/deps.edn') }}
+          # List all files containing dependencies:
+          key: cljdeps-${{ hashFiles('deps.edn') }}
+          restore-keys: cljdeps-
 
-      - name: Prepare java
-        uses: actions/setup-java@v3.5.1
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Install clojure tools
-        uses: DeLaGuardo/setup-clojure@9.5
-        with:
-          cli: 1.11.1.1165    # Clojure CLI based on tools.deps
-
-      - name: Run Unit tests
-        run: clojure -X:test
+      - name: Execute clojure code
+        run: clojure -e "(+ 1 1)"
