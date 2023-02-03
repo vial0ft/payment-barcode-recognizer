@@ -32,4 +32,4 @@ jobs:
           cli: 1.11.1.1165    # Clojure CLI based on tools.deps
 
       - name: Run Unit tests
-        run: clojure -X:test/run
+        run: clojure -X:test
