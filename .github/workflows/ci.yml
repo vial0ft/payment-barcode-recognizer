@@ -41,11 +41,8 @@ jobs:
           # List all files containing dependencies:
           key: cljdeps-${{ hashFiles('deps.edn') }}
           restore-keys: cljdeps-
-
-      - name: Execute clojure code
-        run: clojure -e "(println \"Start\")"
         
-      - name: Execute clojure code
+      - name: Run tests
         run: clojure -M:test
         
       - name: Finish
