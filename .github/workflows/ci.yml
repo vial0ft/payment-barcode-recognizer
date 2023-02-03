@@ -1,19 +1,34 @@
-name: Clojure CI
-
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
+name: Test and Package project
+on: [push]
 jobs:
-  build:
-
+  clojure:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Install dependencies
-      run: clj -X:deps prep
-    - name: Run tests
-      run: clj -M:test
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Cache Clojure Dependencies
+        uses: actions/cache@v3
+        with:
+          path:
+            - ~/.m2
+            - ~/.gitlibs
+          key: cache-${{ hashFiles('**/deps.edn') }}
+
+      - name: Prepare java
+        uses: actions/setup-java@v3.5.1
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install clojure tools
+        uses: DeLaGuardo/setup-clojure@9.5
+        with:
+          cli: 1.11.1.1165    # Clojure CLI based on tools.deps
+
+      - name: Run Unit tests
+        run: clojure -X:test/run
+
+      - name: Package Clojure project
+        run: clojure -X:project/uberjar
