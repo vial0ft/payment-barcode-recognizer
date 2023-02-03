@@ -16,8 +16,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            ~/.m2
+            ~/.m2/repository
             ~/.gitlibs
+            ~/.deps.clj
           key: cache-${{ hashFiles('**/deps.edn') }}
 
       - name: Prepare java
