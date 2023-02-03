@@ -43,10 +43,10 @@ jobs:
           restore-keys: cljdeps-
 
       - name: Execute clojure code
-        run: clojure -e "Start"
+        run: clojure -e "(println \"Start\")"
         
       - name: Execute clojure code
         run: clojure -M:test
         
       - name: Finish
-        run: clojure -e "Done!"
+        run: clojure -e "(println \"Done\")"
